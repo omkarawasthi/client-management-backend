@@ -122,7 +122,7 @@ export const RegisterForEvent = async (req, res) => {
         event.Attendees.push(user._id);
         await event.save();
         await user.save();
-        
+
         res.status(200).json({
             success: true,
             message: 'Registration successful'
@@ -133,5 +133,50 @@ export const RegisterForEvent = async (req, res) => {
         res.status(500).json({
             message: 'Server error'
         });
+    }
+}
+
+
+
+export const DeleteEvent = async (req, res) => {
+    try {
+        console.log("ID is : ", req.params.id);
+        const event = await Event.findByIdAndDelete(req.params.id);
+        if (!event) {
+            return res.status(400).json({
+                success: false,
+                message: 'Event not found'
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Event deleted successfully'
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Server error'
+        });
+    }
+}
+
+
+export const UpdateEvent = async (req, res) => {
+    const { eventId } = req.params;
+    const { EventName, Description, Date, TypeOfEvent } = req.body;
+    try {
+        const updatedEvent = await Event.findByIdAndUpdate(
+            eventId,
+            { EventName, Description, Date, TypeOfEvent },
+            { new: true }
+        );
+        if (!updatedEvent) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+        res.status(200).json({ event: updatedEvent });
+    } catch (error) {
+        console.error("Error updating event:", error);
+        res.status(500).json({ message: 'Server error updating event.' });
     }
 }
