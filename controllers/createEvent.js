@@ -1,5 +1,6 @@
 import Event from '../models/EventModel.js';
 import User from '../models/UserModel.js';
+
 export const CreateEvent = async (req, res) => {
     try {
         const { title, description, category, date } = req.body;
